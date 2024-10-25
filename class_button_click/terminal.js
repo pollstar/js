@@ -40,6 +40,6 @@ class Terminal {
         textareas += `<button id="buttonSend${this.id}">Send</button>`
         textareas += `<br>`
 
-        containerElement.innerHTML += textareas;
+        containerElement.insertAdjacentHTML('beforeend', textareas);
     }
 }
