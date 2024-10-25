@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal class</title>
+    <script src="./terminal.js"></script>
+</head>
+<body>
+    <div id="container"></div>
+    <script>
+        terminals = [
+            {id: "1"},
+            {id: "2"},
+            {id: "3"},
+        ]
+        
+        function insertTextareas(terminals) {
+            let containerElement = document.getElementById(`container`);
+            
+            for (let terminal of terminals) {
+                let textareas = '';
+                textareas += `<textarea id="textarea${terminal.id}" rows="10" cols="50" readonly></textarea><br>`;
+                textareas += `<label for="messageInput${terminal.id}" >Message:</label>`
+                textareas += `<input type="text" id="messageInput${terminal.id}" />`
+                textareas += `<button id="buttonSend${terminal.id}">Send</button>`
+                textareas += `<br>`
+
+                containerElement.innerHTML += textareas;
+            }
+            for (let terminal of terminals) {
+                terminal.terminal = new Terminal(containerElement, terminal.id);
+            }
+        }
+        
+        insertTextareas(terminals);
+    </script>        
+</body>
+
+</html>
