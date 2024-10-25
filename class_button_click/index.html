@@ -19,16 +19,6 @@
             let containerElement = document.getElementById(`container`);
             
             for (let terminal of terminals) {
-                let textareas = '';
-                textareas += `<textarea id="textarea${terminal.id}" rows="10" cols="50" readonly></textarea><br>`;
-                textareas += `<label for="messageInput${terminal.id}" >Message:</label>`
-                textareas += `<input type="text" id="messageInput${terminal.id}" />`
-                textareas += `<button id="buttonSend${terminal.id}">Send</button>`
-                textareas += `<br>`
-
-                containerElement.innerHTML += textareas;
-            }
-            for (let terminal of terminals) {
                 terminal.terminal = new Terminal(containerElement, terminal.id);
             }
         }
