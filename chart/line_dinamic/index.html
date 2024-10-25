@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dynamic Chart with 10-Second Window</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Dynamic Chart with Variable Time Intervals</title>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
+    <script src="../chart.js"></script>
 </head>
 <body>
     <canvas id="myChart" width="400" height="200"></canvas>
@@ -23,10 +24,17 @@
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 2,
                     fill: false
+                },
+                {
+                    label: 'nEXT Real-Time Data',
+                    data: [],
+                    borderColor: 'rgba(0, 0, 192, 1)',
+                    borderWidth: 2,
+                    fill: false
                 }]
             },
             options: {
-                animation: false, // Отключаем анимацию для более быстрого обновления
+                animation: false, // Отключаем анимацию для быстрой отрисовки
                 scales: {
                     x: {
                         type: 'linear',
@@ -35,36 +43,48 @@
                         max: 10 // Показываем последние 10 секунд
                     },
                     y: { beginAtZero: true }
-                }
-            }
+                },
+                elements: {
+                    point : {
+                        pointStyle : 'circle',
+                        radius: 2,
+                    },
+                },
+            },
         });
 
-        // Функция для добавления случайных данных на график
+        // Функция для добавления данных на график
         function addData() {
-            const timestamp = ((Date.now() - startTime) / 1000).toFixed(1); // секунды от начала
+            // Вычисляем временной интервал между 0.08 и 0.12 секунд
+            const interval = (Math.random() * (0.12 - 0.08) + 0.08).toFixed(3);
+            const timestamp = ((Date.now() - startTime) / 1000 + parseFloat(interval)).toFixed(3);
             const value = Math.floor(Math.random() * 100); // Случайное значение от 0 до 100
 
             // Добавляем данные на график
             myChart.data.labels.push(timestamp);
             myChart.data.datasets[0].data.push(value);
+            myChart.data.datasets[1].data.push(30);
 
-            // Оставляем последние 100 данных для отображения (10 секунд)
-            if (myChart.data.labels.length > 100) {
-                myChart.data.labels.shift();
-                myChart.data.datasets[0].data.shift();
-            }
-
-            // Обновляем отображение по оси x для последних 10 секунд
+            // Оставляем последние данные в пределах 10 секунд
             const currentTime = parseFloat(timestamp);
             myChart.options.scales.x.min = Math.max(0, currentTime - 10);
             myChart.options.scales.x.max = currentTime;
 
+            // Удаляем данные, которые выходят за пределы 10 секунд
+            while (myChart.data.labels.length > 0 && parseFloat(myChart.data.labels[0]) < currentTime - 10) {
+                myChart.data.labels.shift();
+                myChart.data.datasets[0].data.shift();
+            }
+
             // Обновляем график
             myChart.update();
+
+            // Планируем следующее добавление данных с учетом переменного интервала
+            setTimeout(addData, interval * 1000); // переводим в миллисекунды
         }
 
-        // Генерируем данные каждые 0.1 секунды
-        setInterval(addData, 100);
+        // Стартуем генерацию данных
+        addData();
     </script>
 </body>
 </html>
